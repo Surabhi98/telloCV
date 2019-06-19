@@ -4,7 +4,7 @@ It is written in python3 and
 
 ## Installation
 You need to have opencv installed and the following python modules for the tello and cv2:
-apt
+apt.
 
 ```
 sudo apt install sudo libopencv-dev python3-opencv
@@ -24,6 +24,45 @@ cd TelloPy
 python setup.py bdist_wheel
 pip install dist/tellopy-*.dev*.whl --upgrade
 ```
+## Disclaimer : Use of Anaconda
+ There is a possibility that pip3 might not work for you in the installation process. We recommend you to use Anaconda in this case.
+ - Install Anaconda for your operating system and update using
+ ```
+ conda update conda
+ ```
+ - Run 
+ ```
+ sudo apt install sudo libopencv-dev python3-opencv
+ ```
+ - Now build TelloPy from the source
+ ```
+ git clone https://github.com/hanyazou/TelloPy
+cd TelloPy
+python setup.py bdist_wheel
+pip install dist/tellopy-*.dev*.whl --upgrade
+```
+- Install other dependencies
+```
+pip install imutils
+
+pip install pynput
+```
+- Install av & openCV
+```
+conda install av -c conda-forge
+pip install opencv-contrib-python
+```
+- Run telloCV.py to check if your drone works!
+```
+python telloCV.py
+```
+- Hit tabe to take off
+CAUTION: See the commands to make the drone work in tellCV.py (backspace to land the drone)
+
+## Use of Raspbian
+We can also make use of raspbian to run the drone. But make sure that you have openCV installed in it and python 3 or 2.
+Some features might not work perfectly if python 2 is used.
+ 
 
 # Flight rules
 - Although tellos are very safe to operate, wear safety glasses as an added precaution
