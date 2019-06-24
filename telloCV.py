@@ -4,9 +4,6 @@ Allows manual operation of the drone and demo tracking mode.
 
 Requires mplayer to record/save video.
 
-Controls:
-- tab to lift off
-- WASD to move the drone
 - space/shift to ascend/descent slowly
 - Q/E to yaw slowly
 - arrow keys to ascend, descend, or yaw quickly
@@ -32,7 +29,10 @@ from tracker import Tracker
 
 def main():
     """ Create a tello controller and show the video feed."""
+
     tellotrack = TelloCV()
+    #tellotrack.read_file()
+    #print("I am here")
 
     for packet in tellotrack.container.demux((tellotrack.vid_stream,)):
         for frame in packet.decode():
@@ -56,15 +56,19 @@ class TelloCV(object):
         self.drone = tellopy.Tello()
         self.init_drone()
         self.init_controls()
+        print("I am under control")
+        self.read_file()
 
         # container for processing the packets into frames
+        
         self.container = av.open(self.drone.get_video_stream())
         self.vid_stream = self.container.streams.video[0]
         self.out_file = None
         self.out_stream = None
         self.out_name = None
         self.start_time = time.time()
-
+        
+        
         # tracking a color
         green_lower = (30, 50, 50)
         green_upper = (80, 255, 255)
@@ -72,10 +76,12 @@ class TelloCV(object):
         # red_upper = (20, 255, 255)
         # blue_lower = (110, 50, 50)
         # upper_blue = (130, 255, 255)
+        
         self.track_cmd = ""
         self.tracker = Tracker(self.vid_stream.height,
                                self.vid_stream.width,
                                green_lower, green_upper)
+
 
     def init_drone(self):
         """Connect, uneable streaming and subscribe to events"""
@@ -87,6 +93,8 @@ class TelloCV(object):
         self.drone.subscribe(self.drone.EVENT_FILE_RECEIVED,
                              self.handle_flight_received)
 
+
+   
 
     def on_press(self, keyname):
         """handler for keyboard listener"""
@@ -107,6 +115,7 @@ class TelloCV(object):
                     key_handler(self.speed)
         except AttributeError:
             print('special key {0} pressed'.format(keyname))
+
 
     def on_release(self, keyname):
         """Reset on key up from keyboard listener"""
@@ -153,6 +162,63 @@ class TelloCV(object):
                                               on_release=self.on_release)
         self.key_listener.start()
         # self.key_listener.join()
+
+    """def read_file(self):
+        f = open("test1.txt","r")
+        #print("I printed {} ".format(f.readline()))
+        keyname = f.readline()
+        keyname = str(keyname).strip('\n')
+        print("I printed {} ".format(keyname))
+
+        if keyname == 'w':
+            #x = lambda speed: self.drone.takeoff()
+            key_handler = self.controls[keyname]
+            if isinstance(key_handler, str):
+            	getattr(self.drone, key_handler)(self.speed)
+            else:
+                key_handler(self.speed)
+            print('I am in takeoff  mode')
+     """
+
+    """def read_file(self):
+        f = open("test1.txt","r")
+        #print("I printed {} ".format(f.readline()))
+        #keyname = f.readline()
+        listOfLines = f.readlines()
+        for idx, keyname in enumerate(listOfLines):
+        #while keyname:
+            keyname = str(keyname).strip('\n')
+            #print("I printed {} ".format(keyname))
+            if keyname == 'w':
+                print('I am in w')
+            if keyname == 'Key.tab':
+                print('I am in tab')
+            if keyname == 'i':
+                print('I am in i')
+            #x = lambda speed: self.drone.takeoff()
+        key_handler = self.controls[keyname]
+        if isinstance(key_handler, str):
+        	getattr(self.drone, key_handler)(self.speed)
+        else:
+            key_handler(self.speed)
+            print('I am in takeoff  mode')
+    """       
+    def read_file(self):
+        f = open("test1.txt","r")
+        #print("I printed {} ".format(f.readline()))
+        #keyname = f.readline()
+        listOfLines = f.readlines()
+        for idx, keyname in enumerate(listOfLines):
+        #while keyname:
+            keyname = str(keyname).strip('\n')
+            #print("I printed {} ".format(keyname))
+            if keyname in self.controls:
+                key_handler = self.controls[keyname]
+                if isinstance(key_handler, str):
+                    getattr(self.drone, key_handler)(self.speed)
+                else:
+                    key_handler(self.speed)
+            print('I am in {}'.format(keyname))
 
     def process_frame(self, frame):
         """convert frame to cv2 image and show"""
