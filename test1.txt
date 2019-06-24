@@ -1,4 +1,15 @@
-w
 Key.tab
+w
+s
+a
+d
+Key.space
+Key.shift
+q
+e
 i
-
+k
+j
+l
+Key.enter
+Key.backspace
